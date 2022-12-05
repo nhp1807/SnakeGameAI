@@ -70,36 +70,42 @@ class Agent:
         # Convert normal array into numpy array
         return np.array(state, dtype=int)
 
+    # Remember state and append to the memory
     def remember(self, state, action, reward, next_state, done):
         # popleft if MAX_MEMORY is reached
         self.memory.append((state, action, reward, next_state, done))
 
+    # Train the agent from train_short_memory() --> many states --> make the agent smarter
     def train_long_memory(self):
+        # If the lenght of memory bigger than batch_size then pick random number of batch_size in memory
         if len(self.memory) > BATCH_SIZE:
-            mini_sample = random.sample(
-                self.memory, BATCH_SIZE)  # list of tuples
+            mini_sample = random.sample(self.memory, BATCH_SIZE)  # list of tuples
         else:
             mini_sample = self.memory
 
+        # Combine all states, actions, rewards, next_states, dones
         states, actions, rewards, next_states, dones = zip(*mini_sample)
+        # Train multiple states
         self.trainer.train_step(states, actions, rewards, next_states, dones)
-        # for state, action, reward, nexrt_state, done in mini_sample:
-        #    self.trainer.train_step(state, action, reward, next_state, done)
 
+    # Train the only 1 state
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
 
+    # From current state to determind the action
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
         self.epsilon = 80 - self.n_games
-        final_move = [0, 0, 0]
-        if random.randint(0, 200) < self.epsilon:
+        final_move = [0, 0, 0] # One of those must be true
+        if random.randint(0, 200) < self.epsilon: # The smaller the epsilon, the less random is needed
             move = random.randint(0, 2)
             final_move[move] = 1
         else:
+            # Format state array into tensor format
             state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
-            move = torch.argmax(prediction).item()
+            prediction = self.model(state0) # Calculate the action can be from the state
+            # print(prediction)
+            move = torch.argmax(prediction).item() # Return the index of final_move array
             final_move[move] = 1
 
         return final_move
