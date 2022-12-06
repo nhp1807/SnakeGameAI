@@ -32,6 +32,7 @@ class Linear_QNet(nn.Module):
     def load(self, filename='model.pth'):
         if os.path.exists('./model/model.pth'):
             self.load_state_dict(torch.load('model/model.pth'))
+            # self.eval()
             print('Model loaded')
 
 class QTrainer:
