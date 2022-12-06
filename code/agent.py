@@ -104,6 +104,7 @@ class Agent:
             # Format state array into tensor format
             state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0) # Calculate the action can be from the state
+                                            #Execute the forward function
             # print(prediction)
             move = torch.argmax(prediction).item() # Return the index of final_move array
             final_move[move] = 1
