@@ -39,16 +39,16 @@ class QTrainer:
     def __init__(self, model, lr, gamma):
         self.lr = lr
         self.gamma = gamma
-        self.model = model
+        self.model = model  # Linear_QNet
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
 
     def train_step(self, state, action, reward, next_state, done):
+        # Convert normal array into tensor array
         state = torch.tensor(state, dtype=torch.float)
         next_state = torch.tensor(next_state, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long)
         reward = torch.tensor(reward, dtype=torch.float)
-        # (n, x)
 
         if len(state.shape) == 1:
             # (1, x)
@@ -65,6 +65,7 @@ class QTrainer:
         for idx in range(len(done)):
             Q_new = reward[idx]
             if not done[idx]:
+                # Bellman equation
                 Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))
 
             target[idx][torch.argmax(action[idx]).item()] = Q_new
