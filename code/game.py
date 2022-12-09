@@ -146,13 +146,16 @@ class SnakeGameAI:
         pygame.draw.circle(self.display, BLACK, (self.snake[0].x +10, self.snake[0].y +10), BLOCK_SIZE/1.5)
         
         # Fill the food
-        pygame.draw.rect(self.display, RED, pygame.Rect(
-            self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        # pygame.draw.rect(self.display, RED, pygame.Rect(
+        #     self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        food_image = pygame.image.load("image/coin.png").convert()
+        
 
         # Display the score
         text = font.render("Score: " + str(self.score), True, BLACK)
         
-        self.display.blit(text, [0, 0])
+        self.display.blit(food_image, (self.food.x, self.food.y))
+        self.display.blit(text, (0, 0))
         pygame.display.flip()
 
     def _move(self, action):
